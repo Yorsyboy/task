@@ -5,8 +5,10 @@ import AddTask from "./components/AddTask";
 import Dashboard from "./components/Dashboard";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { register, reset, logout, login } from "./features/auth/authSlice";
+// @ts-ignore
+import { reset, logout, login } from "./features/auth/authSlice";
 import Spinner from "./components/Spinner";
+// @ts-ignore
 import { allTasks, deleteTask, updateTask } from "./features/task/taskSlice";
 
 export type Task = {
@@ -98,7 +100,7 @@ const App: React.FC = () => {
     }
   };
 
-  const handleSendForApproval = (id?: string): void => {
+  const handleSendForApproval = (id?: number): void => {
     if (!id) {
         toast.error("Task ID is missing.");
         return;
@@ -123,7 +125,7 @@ const App: React.FC = () => {
  
  
 
-const handleApproveTask = (id?: string): void => {
+const handleApproveTask = (id?: number): void => {
   if (!id) {
       toast.error("Task ID is missing.");
       return;
