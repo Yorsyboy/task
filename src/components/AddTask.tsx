@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+// @ts-ignore
 import { addTask } from "../features/task/taskSlice";
 import { toast } from "react-toastify";
 
@@ -13,7 +14,7 @@ type AddTaskProps = {
 
 
 
-const AddTask: React.FC<AddTaskProps> = ({ handleAddTasks }) => {
+const AddTask: React.FC<AddTaskProps> = ({ }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const authState = useSelector((state: any) => state.auth);
