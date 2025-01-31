@@ -3,7 +3,7 @@ import { Task } from "../App";
 
 interface DashboardProps {
   alltasks: Task[];
-  loggedInUser: { name: string; role: "user" | "supervisor"; department: string };
+  loggedInUser: { _id: number, name: string; role: "user" | "supervisor"; department: string };
   handleApproveTask: (id: number) => void;
   handleSendForApproval: (id: number) => void;
   handleDeleteTask: (id: number) => void;
@@ -19,6 +19,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   useEffect(() => {
     console.log("All tasks:", alltasks);
+    console.log("Logged in user:", loggedInUser);
   }, [alltasks]);
   return (
     <div className="min-h-screen bg-gray-100 p-5">
@@ -34,7 +35,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                   <div key={task._id} className={`p-4 rounded shadow ${status === 'pending' ? 'bg-gray-50' : status === 'waiting for approval' ? 'bg-yellow-50' : 'bg-green-50'}`}>
                     <p className="font-medium">{task.description}</p>
                     <p className="text-sm text-gray-500">
-                      Created by: {task.createdBy} | Department: {task.department} | Created At:{" "}
+                       Department: {task.department} | Created At:{" "}
                       {new Date(task.createdAt).toLocaleString()}
                     </p>
                     {status === "completed" && task.approvedAt && (
@@ -42,7 +43,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                         Approved At: {new Date(task.approvedAt).toLocaleString()}
                       </p>
                     )}
-                    {status === "pending" && loggedInUser.name === task.createdBy && (
+                    {status === "pending" && loggedInUser._id === task.createdBy && (
                       <button
                         onClick={() => handleSendForApproval(task._id)}
                         className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"

@@ -39,6 +39,32 @@ export const getTaskbyUser = async (userId, token) => {
     return response.data;
 };
 
+// Update a task
+export const updateTask = async (taskData, token) => {
+    console.log("Sending Task Update Request:", taskData); // Debugging log
+
+    if (taskData.status === 'pending' && (!taskData || !taskData._id || !taskData.createdBy)) {
+        throw new Error("Invalid task data. 'createdBy' field is required for approval.");
+    }
+
+    const config = {
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    };
+
+    try {
+        const response = await axios.put(`${API_URL}${taskData._id}`, taskData, config);
+        console.log("Task Update Response:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Update Task Error:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
+
+
+ 
+
 
 // Delete a task
 export const deleteTask = async (taskId, token) => {
@@ -58,7 +84,8 @@ const taskServices = {
     addTask,
     getTaskbyUser,
     getAllTasks,
-    deleteTask
+    deleteTask,
+    updateTask
 };
 
 export default taskServices;

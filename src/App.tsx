@@ -7,13 +7,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { register, reset, logout, login } from "./features/auth/authSlice";
 import Spinner from "./components/Spinner";
-import { allTasks, deleteTask } from "./features/task/taskSlice";
+import { allTasks, deleteTask, updateTask } from "./features/task/taskSlice";
 
 export type Task = {
   _id: number;
   description: string;
   status: "pending" | "waiting for approval" | "completed";
-  createdBy: string;
+  user: number;
+  createdBy: number;
   department: string;
   createdAt: string;
   approvedAt?: string;
@@ -21,6 +22,7 @@ export type Task = {
 
 type User = {
   _id: number;
+  user: number;
   name: string;
   role: "user" | "supervisor";
   department: string;
@@ -43,7 +45,6 @@ const App: React.FC = () => {
 
   const authState = useSelector((state: any) => state.auth);
   const alltasks = useSelector((state: any) => state.task.tasks);
-  const isLoading = useSelector((state: any) => state.task.isLoading);
 
   const handleLogin = (): void => {
     const userData = {
@@ -56,21 +57,28 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (authState.isError) {
-      toast.error(authState.errorMessage);
+      toast.error(`❌ ${authState.message}`);
     }
 
-    if (authState.isSuccess) {
+    if (authState.isSuccess && authState.user) {
       setLoggedInUser(authState.user);
+      localStorage.setItem("loggedInUser", JSON.stringify(authState.user));
+      toast.success("Login successful.");
       navigate("/dashboard");
     }
-      dispatch(allTasks());
-    console.log(alltasks);
-  }, [tasks, authState, dispatch]);
+  }, [authState, navigate]);
+
+  useEffect(() => {
+    dispatch(allTasks());
+  }, [dispatch]);
 
   const handleLogout = (): void => {
     dispatch(logout());
     dispatch(reset());
     navigate("/");
+    setLoggedInUser(null);
+    setTasks([]);
+    toast.success("Logout successful.");
   };
 
   const handleAddTask = (description: string): void => {
@@ -79,9 +87,10 @@ const App: React.FC = () => {
         ...tasks,
         {
           _id: loggedInUser._id,
+          user: loggedInUser.user,
           description,
           status: "pending",
-          createdBy: loggedInUser.name,
+          createdBy: loggedInUser.user,
           department: loggedInUser.department,
           createdAt: new Date().toISOString(),
         },
@@ -89,36 +98,61 @@ const App: React.FC = () => {
     }
   };
 
-  const handleSendForApproval = (id: number): void => {
-    setTasks(
-      tasks.map((task) =>
-        task._id === id ? { ...task, status: "waiting for approval" } : task
-      )
-    );
-  };
+  const handleSendForApproval = (id?: string): void => {
+    if (!id) {
+        toast.error("Task ID is missing.");
+        return;
+    }
 
-  const handleApproveTask = (id: number): void => {
-    setTasks(
-      tasks.map((task) =>
-        task._id === id
-          ? {
-              ...task,
-              status: "completed",
-              approvedAt: new Date().toISOString(),
-            }
-          : task
-      )
-    );
-  };
+    if (loggedInUser?.role === "user") {
+        const taskData = { 
+            _id: id, 
+            status: "waiting for approval", // ✅ Change to match backend
+            createdBy: loggedInUser?._id // ✅ Ensure correct key name
+        };
+
+        console.log("Task Data Before Dispatch:", taskData); // Debugging log
+        dispatch(updateTask(taskData));
+        toast.success("Task sent for approval.");
+    } else {
+        toast.error("Only users can send tasks for approval.");
+    }
+};
+
+
+ 
+ 
+
+const handleApproveTask = (id?: string): void => {
+  if (!id) {
+      toast.error("Task ID is missing.");
+      return;
+  }
+
+  if (loggedInUser?.role === "supervisor") {
+      const taskData = {
+          _id: id,
+          status: "approved", // ✅ Change to match backend
+          approvedAt: new Date().toISOString(),
+      };
+
+      console.log("Task Data Before Dispatch:", taskData); // Debugging log
+      dispatch(updateTask(taskData));
+      toast.success("Task approved successfully.");
+  } else {
+      toast.error("Only supervisors can approve tasks.");
+  }
+};
+
 
   const handleDeleteTask = (id: number): void => {
-    console.log("🔴 Deleting Task with ID:", id);
     if (!id) {
-      console.error("❌ Error: Task ID is undefined.");
+      toast.error("❌ Error: Task ID is undefined.");
       return;
   }
     if (loggedInUser?.role === "supervisor") {
       dispatch(deleteTask(id));
+      toast.success("Task deleted successfully.");
     } else {
       toast.error("Only supervisors can delete tasks.");
     }

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { addTask } from "../features/task/taskSlice";
+import { toast } from "react-toastify";
 
 
 type AddTaskProps = {
@@ -30,6 +31,7 @@ const AddTask: React.FC<AddTaskProps> = ({ handleAddTasks }) => {
           createdAt: new Date().toISOString(),
         })
       );
+      toast.success("Task added successfully");
       navigate("/dashboard");
     }
   };
