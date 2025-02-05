@@ -41,7 +41,6 @@ export const getTaskbyUser = async (userId, token) => {
 
 // Update a task
 export const updateTask = async (taskData, token) => {
-    console.log("Sending Task Update Request:", taskData); // Debugging log
 
     if (taskData.status === 'pending' && (!taskData || !taskData._id || !taskData.createdBy)) {
         throw new Error("Invalid task data. 'createdBy' field is required for approval.");
@@ -53,7 +52,6 @@ export const updateTask = async (taskData, token) => {
 
     try {
         const response = await axios.put(`${API_URL}${taskData._id}`, taskData, config);
-        console.log("Task Update Response:", response.data);
         return response.data;
     } catch (error) {
         console.error("Update Task Error:", error.response?.data || error.message);
@@ -68,7 +66,6 @@ export const updateTask = async (taskData, token) => {
 
 // Delete a task
 export const deleteTask = async (taskId, token) => {
-    console.log("Deleting Task API Call with ID:", taskId);
     const config = {
         headers: {
             Authorization: `Bearer ${token}`,

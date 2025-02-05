@@ -20,7 +20,9 @@ export type Task = {
   createdBy: number;
   department: string;
   createdAt: string;
-  approvedBy?: string;
+  approvedBy?: {
+    name: string;
+  };
 };
 
 type User = {
@@ -67,17 +69,26 @@ const App: React.FC = () => {
       setLoggedInUser(authState.user);
       localStorage.setItem("loggedInUser", JSON.stringify(authState.user));
       toast.success("Login successful.");
-      navigate("/dashboard");
+
+      // Redirect based on intended page
+      navigate(location.pathname !== "/" ? location.pathname : "/dashboard");
+
       dispatch(allTasks());
     }
   }, [authState, navigate, dispatch]);
 
+  useEffect(() => {
+    dispatch(allTasks());
+  }, [dispatch]);
+
   const handleLogout = (): void => {
     dispatch(logout());
     dispatch(reset());
-    navigate("/");
+    localStorage.removeItem("loggedInUser"); // ✅ Explicitly remove from localStorage
+    localStorage.removeItem("tasks"); // ✅ Clear stored tasks
     setLoggedInUser(null);
     setTasks([]);
+    navigate("/");
     toast.success("Logout successful.");
   };
 
@@ -121,8 +132,11 @@ const App: React.FC = () => {
         createdBy: loggedInUser?._id, // ✅ Ensure correct key name
       };
 
-      console.log("Task Data Before Dispatch:", taskData); // Debugging log
       dispatch(updateTask(taskData));
+
+      // After the task is updated, refetch the task list
+      dispatch(allTasks());
+
       toast.success("Task sent for approval.");
     } else {
       toast.error("Only users can send tasks for approval.");
@@ -138,12 +152,14 @@ const App: React.FC = () => {
     if (loggedInUser?.role === "supervisor") {
       const taskData = {
         _id: id,
-        status: "approved", // ✅ Change to match backend
+        status: "approved",
         approvedAt: new Date().toISOString(),
       };
-
-      console.log("Task Data Before Dispatch:", taskData); // Debugging log
       dispatch(updateTask(taskData));
+
+      // After the task is updated, refetch the task list
+      dispatch(allTasks());
+
       toast.success("Task approved successfully.");
     } else {
       toast.error("Only supervisors can approve tasks.");
@@ -200,18 +216,18 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-5">
       <div className="max-w-6xl mx-auto bg-white p-6 rounded shadow">
-        <h1 className="text-2xl font-bold mb-4">Task Scheduler</h1>
+        <h1 className="text-2xl font-bold mb-4">Task Tracker</h1>
         <div className="flex justify-between mb-4">
           <p className="text-lg font-semibold">
-            {loggedInUser.name} | {loggedInUser.department}
+            {loggedInUser.name} | Department: {loggedInUser.department}
           </p>
           <div className="flex space-x-4">
-            <Link
-              to="/add-task"
+            <button
+              onClick={() => navigate("/add-task")}
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             >
               Add Task
-            </Link>
+            </button>
             <button
               onClick={handleLogout}
               className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
