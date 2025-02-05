@@ -25,7 +25,7 @@ const Dashboard: React.FC<DashboardProps> = ({
     <div className="min-h-screen bg-gray-100 p-5">
       <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 bg-white p-6 rounded shadow">
-        {["pending", "waiting for approval", "completed"].map((status) => (
+        {["pending", "waiting for approval", "approved"].map((status) => (
           <div key={status} className="mb-6">
             <h2 className="text-xl font-semibold mb-4">{status}</h2>
             <div className="space-y-2">
@@ -34,13 +34,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                 .map((task) => (
                   <div key={task._id} className={`p-4 rounded shadow ${status === 'pending' ? 'bg-gray-50' : status === 'waiting for approval' ? 'bg-yellow-50' : 'bg-green-50'}`}>
                     <p className="font-medium">{task.description}</p>
-                    <p className="text-sm text-gray-500">
-                       Department: {task.department} | Created At:{" "}
-                      {new Date(task.createdAt).toLocaleString()}
-                    </p>
-                    {status === "completed" && task.approvedAt && (
+                    {status === "approved" && task.approvedBy && (
                       <p className="text-sm text-gray-500">
-                        Approved At: {new Date(task.approvedAt).toLocaleString()}
+                        Approved By: {loggedInUser.name} | At - { new Date().toLocaleString()}
                       </p>
                     )}
                     {status === "pending" && loggedInUser._id === task.createdBy && (

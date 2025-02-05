@@ -14,12 +14,12 @@ import { allTasks, deleteTask, updateTask } from "./features/task/taskSlice";
 export type Task = {
   _id: number;
   description: string;
-  status: "pending" | "waiting for approval" | "completed";
+  status: "pending" | "waiting for approval" | "approved";
   user: number;
   createdBy: number;
   department: string;
   createdAt: string;
-  approvedAt?: string;
+  approvedBy?: string;
 };
 
 type User = {
