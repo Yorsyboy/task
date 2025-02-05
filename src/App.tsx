@@ -10,6 +10,7 @@ import { reset, logout, login } from "./features/auth/authSlice";
 import Spinner from "./components/Spinner";
 // @ts-ignore
 import { allTasks, deleteTask, updateTask } from "./features/task/taskSlice";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export type Task = {
   _id: number;
@@ -67,12 +68,9 @@ const App: React.FC = () => {
       localStorage.setItem("loggedInUser", JSON.stringify(authState.user));
       toast.success("Login successful.");
       navigate("/dashboard");
+      dispatch(allTasks());
     }
-  }, [authState, navigate]);
-
-  useEffect(() => {
-    dispatch(allTasks());
-  }, [dispatch]);
+  }, [authState, navigate, dispatch]);
 
   const handleLogout = (): void => {
     dispatch(logout());
@@ -82,6 +80,16 @@ const App: React.FC = () => {
     setTasks([]);
     toast.success("Logout successful.");
   };
+
+  useEffect(() => {
+    if (loggedInUser) {
+      const timer = setTimeout(() => {
+        handleLogout();
+      }, 5 * 60 * 1000); // 5 minutes
+
+      return () => clearTimeout(timer);
+    }
+  }, [loggedInUser]);
 
   const handleAddTask = (description: string): void => {
     if (description.trim() && loggedInUser) {
@@ -102,56 +110,51 @@ const App: React.FC = () => {
 
   const handleSendForApproval = (id?: number): void => {
     if (!id) {
-        toast.error("Task ID is missing.");
-        return;
+      toast.error("Task ID is missing.");
+      return;
     }
 
     if (loggedInUser?.role === "user") {
-        const taskData = { 
-            _id: id, 
-            status: "waiting for approval", // ✅ Change to match backend
-            createdBy: loggedInUser?._id // ✅ Ensure correct key name
-        };
+      const taskData = {
+        _id: id,
+        status: "waiting for approval", // ✅ Change to match backend
+        createdBy: loggedInUser?._id, // ✅ Ensure correct key name
+      };
 
-        console.log("Task Data Before Dispatch:", taskData); // Debugging log
-        dispatch(updateTask(taskData));
-        toast.success("Task sent for approval.");
+      console.log("Task Data Before Dispatch:", taskData); // Debugging log
+      dispatch(updateTask(taskData));
+      toast.success("Task sent for approval.");
     } else {
-        toast.error("Only users can send tasks for approval.");
+      toast.error("Only users can send tasks for approval.");
     }
-};
+  };
 
-
- 
- 
-
-const handleApproveTask = (id?: number): void => {
-  if (!id) {
+  const handleApproveTask = (id?: number): void => {
+    if (!id) {
       toast.error("Task ID is missing.");
       return;
-  }
+    }
 
-  if (loggedInUser?.role === "supervisor") {
+    if (loggedInUser?.role === "supervisor") {
       const taskData = {
-          _id: id,
-          status: "approved", // ✅ Change to match backend
-          approvedAt: new Date().toISOString(),
+        _id: id,
+        status: "approved", // ✅ Change to match backend
+        approvedAt: new Date().toISOString(),
       };
 
       console.log("Task Data Before Dispatch:", taskData); // Debugging log
       dispatch(updateTask(taskData));
       toast.success("Task approved successfully.");
-  } else {
+    } else {
       toast.error("Only supervisors can approve tasks.");
-  }
-};
-
+    }
+  };
 
   const handleDeleteTask = (id: number): void => {
     if (!id) {
       toast.error("❌ Error: Task ID is undefined.");
       return;
-  }
+    }
     if (loggedInUser?.role === "supervisor") {
       dispatch(deleteTask(id));
       toast.success("Task deleted successfully.");
@@ -220,19 +223,24 @@ const handleApproveTask = (id?: number): void => {
         <Routes>
           <Route
             path="/add-task"
-            element={<AddTask handleAddTasks={handleAddTask} />}
+            element={
+              <ProtectedRoute>
+                <AddTask handleAddTasks={handleAddTask} />
+              </ProtectedRoute>
+            }
           />
-
           <Route
             path="/dashboard"
             element={
-              <Dashboard
-                alltasks={alltasks}
-                loggedInUser={loggedInUser}
-                handleApproveTask={handleApproveTask}
-                handleSendForApproval={handleSendForApproval}
-                handleDeleteTask={handleDeleteTask}
-              />
+              <ProtectedRoute>
+                <Dashboard
+                  alltasks={alltasks}
+                  loggedInUser={loggedInUser}
+                  handleApproveTask={handleApproveTask}
+                  handleSendForApproval={handleSendForApproval}
+                  handleDeleteTask={handleDeleteTask}
+                />
+              </ProtectedRoute>
             }
           />
         </Routes>
