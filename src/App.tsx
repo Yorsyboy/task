@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import "tailwindcss/tailwind.css";
 import AddTask from "./components/AddTask";
 import Dashboard from "./components/Dashboard";
