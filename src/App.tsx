@@ -185,21 +185,22 @@ const App: React.FC = () => {
 
   if (!loggedInUser) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+      <img src="/logo.png" alt="Logo" className="mb-6 w-32 mx-auto" />
         <div className="bg-white p-6 rounded shadow-md w-80">
           <h1 className="text-2xl font-bold mb-4 text-center">Login</h1>
           <input
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter username"
+            placeholder="Enter email"
             className="w-full p-2 border rounded mb-3 focus:outline-none"
           />
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter username"
+            placeholder="Enter password"
             className="w-full p-2 border rounded mb-3 focus:outline-none"
           />
           <button
