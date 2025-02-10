@@ -52,6 +52,11 @@ const App: React.FC = () => {
   const alltasks = useSelector((state: any) => state.task.tasks);
 
   const handleLogin = (): void => {
+    if (!email || !password) {
+      toast.error("Email and password cannot be empty.");
+      return;
+    }
+
     const userData = {
       email,
       password,
@@ -116,8 +121,10 @@ const App: React.FC = () => {
           createdAt: new Date().toISOString(),
         },
       ]);
+    } else {
+      toast.error("Task description cannot be empty.");
     }
-  };
+  }
 
   const handleSendForApproval = (id?: number): void => {
     if (!id) {
@@ -186,7 +193,7 @@ const App: React.FC = () => {
   if (!loggedInUser) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <img src="/logo.png" alt="Logo" className="mb-6 w-32 mx-auto" />
+        <img src="/logo.png" alt="Logo" className="mb-6 w-32 mx-auto" />
         <div className="bg-white p-6 rounded shadow-md w-80">
           <h1 className="text-2xl font-bold mb-4 text-center">Login</h1>
           <input
@@ -195,6 +202,7 @@ const App: React.FC = () => {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter email"
             className="w-full p-2 border rounded mb-3 focus:outline-none"
+            required
           />
           <input
             type="password"
@@ -202,6 +210,7 @@ const App: React.FC = () => {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter password"
             className="w-full p-2 border rounded mb-3 focus:outline-none"
+            required
           />
           <button
             onClick={handleLogin}

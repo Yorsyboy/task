@@ -40,7 +40,7 @@ const AddTask: React.FC<AddTaskProps> = ({ }) => {
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Add New Task</h2>
-      <div className="mb-4 flex">
+      <div className="mb-4 flex gap-2">
         <input
           type="text"
           placeholder="Enter task description"
