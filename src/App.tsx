@@ -15,14 +15,25 @@ import ProtectedRoute from "./components/ProtectedRoute";
 export type Task = {
   _id: number;
   description: string;
-  status: "pending" | "waiting for approval" | "approved";
+  status: "Pending" | "Waiting for approval" | "Approved";
   user: number;
-  createdBy: number;
+  createdBy: {
+    _id: number;
+    name: string;
+  }
   department: string;
   createdAt: string;
   approvedBy?: {
     name: string;
   };
+  title: string;
+  dueDate: string;
+  priority: "low" | "medium" | "high";
+  progress: number;
+  assignedTo: {
+    name: string;
+  },
+  instruction?: string;
 };
 
 type User = {
@@ -107,18 +118,26 @@ const App: React.FC = () => {
     }
   }, [loggedInUser]);
 
-  const handleAddTask = (description: string): void => {
+  const handleAddTask = (title: string, description: string, dueDate: string, priority: "low" | "medium" | "high", progress: number): void => {
     if (description.trim() && loggedInUser) {
       setTasks([
         ...tasks,
         {
           _id: loggedInUser._id,
           user: loggedInUser.user,
+          title,
           description,
-          status: "pending",
-          createdBy: loggedInUser.user,
+          dueDate,
+          priority,
+          progress,
+          status: "Pending",
+          createdBy: { _id: loggedInUser._id, name: loggedInUser.name },
           department: loggedInUser.department,
           createdAt: new Date().toISOString(),
+          assignedTo: {
+            name: "",
+          },
+          instruction: "",
         },
       ]);
     } else {
@@ -135,7 +154,7 @@ const App: React.FC = () => {
     if (loggedInUser?.role === "user") {
       const taskData = {
         _id: id,
-        status: "waiting for approval", // ✅ Change to match backend
+        status: "Waiting for approval", // ✅ Change to match backend
         createdBy: loggedInUser?._id, // ✅ Ensure correct key name
       };
 
@@ -159,7 +178,7 @@ const App: React.FC = () => {
     if (loggedInUser?.role === "supervisor") {
       const taskData = {
         _id: id,
-        status: "approved",
+        status: "Approved",
         approvedAt: new Date().toISOString(),
       };
       dispatch(updateTask(taskData));

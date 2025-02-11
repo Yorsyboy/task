@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = "https://task-backend-hhjo.onrender.com/api/tasks/";
+const API_URL = "http://localhost:5000/api/tasks/";
+// const API_URL = "https://task-backend-hhjo.onrender.com/api/tasks/";
 
 // Create a new task
 export const addTask = async (taskData, token) => {
