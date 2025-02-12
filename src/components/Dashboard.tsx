@@ -28,7 +28,6 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   useEffect(() => {
     dispatch(allTasks());
-    console.log(loggedInUser);
   }, [dispatch]);
 
   return (

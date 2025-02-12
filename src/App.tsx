@@ -166,7 +166,7 @@ const App: React.FC = () => {
 
       toast.success("Task sent for approval.");
     } else {
-      toast.error("Only users can send tasks for approval.");
+      toast.error("Only Creator/assignee can send tasks for approval.");
     }
   };
 

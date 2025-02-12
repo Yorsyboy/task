@@ -37,7 +37,6 @@ const AddTask: React.FC<AddTaskProps> = ({}) => {
 
   useEffect(() => {
     if (!isLoading && users.length === 0) {
-      console.log("Fetching users...");
       dispatch(getAllUsers())
         .unwrap()
         .then((data: any) => console.log("Users fetched:", data))
