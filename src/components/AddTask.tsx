@@ -33,6 +33,7 @@ const AddTask: React.FC<AddTaskProps> = ({}) => {
   const [progress, setProgress] = useState<number>(0);
   const [assignedTo, setAssignedTo] = useState<string>("");
   const [instruction, setInstruction] = useState<string>("");
+  const [documents, setDocuments] = useState<FileList | null>(null);
 
   useEffect(() => {
     if (!isLoading && users.length === 0) {
@@ -46,11 +47,12 @@ const AddTask: React.FC<AddTaskProps> = ({}) => {
     }
   }, [dispatch, isLoading, users.length]);
 
-  const handleAddTask = (): void => {
+  const handleAddTask = async (): Promise<void> => {
     if (!title || !description || !dueDate || !assignedTo) {
       toast.error("Please fill in all fields");
       return;
     }
+
     const currentDate = new Date();
     const selectedDueDate = new Date(dueDate);
 
@@ -58,26 +60,33 @@ const AddTask: React.FC<AddTaskProps> = ({}) => {
       toast.error("Due date cannot be in the past");
       return;
     }
-    
-    dispatch(
-      addTask({
-        title,
-        description,
-        dueDate,
-        priority,
-        progress,
-        createdBy: authState.user.name,
-        department: authState.user.department,
-        user: authState.user._id,
-        status: "Pending",
-        createdAt: new Date().toISOString(),
-        assignedTo,
-        instruction: instruction,
-      })
-    );
 
-    toast.success("Task added successfully");
-    navigate("/dashboard");
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("dueDate", dueDate);
+    formData.append("priority", priority);
+    formData.append("progress", String(progress));
+    formData.append("createdBy", authState.user._id);
+    formData.append("department", authState.user.department);
+    formData.append("status", "Pending");
+    formData.append("createdAt", new Date().toISOString());
+    formData.append("assignedTo", assignedTo);
+    formData.append("instruction", instruction);
+
+    if (documents) {
+      Array.from(documents).forEach((file) => {
+        formData.append("documents", file); // Must match backend field name
+      });
+    }
+
+    try {
+      await dispatch(addTask(formData)).unwrap();
+      toast.success("Task added successfully");
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(String(error));
+    }
   };
 
   return (
@@ -163,6 +172,18 @@ const AddTask: React.FC<AddTaskProps> = ({}) => {
             className="w-full p-2 border rounded mb-2"
             value={instruction}
             onChange={(e) => setInstruction(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="documents" className="text-sm">
+            Additional Documents
+          </label>
+          <input
+            type="file"
+            multiple
+            className="w-full p-2 border rounded mb-2"
+            onChange={(e) => setDocuments(e.target.files)}
           />
         </div>
 

@@ -1,7 +1,6 @@
 import axios from "axios";
 
-// const API_URL = "https://task-backend-hhjo.onrender.com/api/users/";
-const API_URL = "http://localhost:5000/api/users/";
+const API_URL = "https://task-backend-hhjo.onrender.com/api/users/";
 
 // Register a new user
 export const register = async (userData) => {

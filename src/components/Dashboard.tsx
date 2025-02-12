@@ -28,7 +28,6 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   useEffect(() => {
     dispatch(allTasks());
-    console.log(allTasks);
     console.log(loggedInUser);
   }, [dispatch]);
 
@@ -99,21 +98,40 @@ const Dashboard: React.FC<DashboardProps> = ({
                       </span>
                     </p>
                     <p className="font-medium">
-                      Assigned To: {" "}
+                      Assigned To:{" "}
                       <span className="font-light">
                         {task.assignedTo?.name || "Not Assigned"}
                       </span>
                     </p>
                     {task.instruction && (
                       <p className="font-medium">
-                        Instructions: {" "}
+                        Instructions:{" "}
                         <span className="font-light">{task.instruction}</span>
                       </p>
                     )}
                     <p className="font-medium">
-                      Created By: {" "}
+                      Created By:{" "}
                       <span className="font-light">{task.createdBy.name}</span>
                     </p>
+                    <p className="font-medium">
+                      Documents:{" "}
+                      <span className="font-light">
+                        {task.documents?.length
+                          ? task.documents.map((doc, index) => (
+                              <a
+                                key={index}
+                                href={doc.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block"
+                              >
+                                Document {index + 1}
+                              </a>
+                            ))
+                          : "No Documents"}
+                      </span>
+                    </p>
+
                     {status === "Approved" && task.approvedBy && (
                       <p className="text-sm text-gray-500">
                         Approved By: {task.approvedBy.name} | At -{" "}

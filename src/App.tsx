@@ -34,6 +34,7 @@ export type Task = {
     name: string;
   },
   instruction?: string;
+  documents?: { public_id: string; url: string }[];
 };
 
 type User = {
