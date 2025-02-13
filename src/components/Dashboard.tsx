@@ -133,12 +133,17 @@ const Dashboard: React.FC<DashboardProps> = ({
 
                     {status === "Approved" && task.approvedBy && (
                       <p className="text-sm text-gray-500">
-                        Approved By: {task.approvedBy.name} | At -{" "}
-                        {new Date().toLocaleString()}
+                        Approved By: {task.approvedBy.name} <br></br> | At -{" "}
+                        {new Date().toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
                       </p>
                     )}
                     {status === "Pending" &&
-                      loggedInUser._id === task.createdBy._id && (
+                      (loggedInUser._id === task.createdBy._id ||
+                        loggedInUser._id === task.assignedTo._id) && (
                         <button
                           onClick={() => handleSendForApproval(task._id)}
                           className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"

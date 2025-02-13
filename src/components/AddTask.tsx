@@ -13,7 +13,7 @@ type AddTaskProps = {
     description: string,
     dueDate: string,
     priority: "low" | "medium" | "high",
-    progress: number
+    // progress: number
   ) => void;
 };
 
@@ -30,7 +30,7 @@ const AddTask: React.FC<AddTaskProps> = ({}) => {
   const [description, setDescription] = useState<string>("");
   const [dueDate, setDueDate] = useState<string>("");
   const [priority, setPriority] = useState<"low" | "medium" | "high">("low");
-  const [progress, setProgress] = useState<number>(0);
+  // const [progress, setProgress] = useState<number>(0);
   const [assignedTo, setAssignedTo] = useState<string>("");
   const [instruction, setInstruction] = useState<string>("");
   const [documents, setDocuments] = useState<FileList | null>(null);
@@ -65,7 +65,7 @@ const AddTask: React.FC<AddTaskProps> = ({}) => {
     formData.append("description", description);
     formData.append("dueDate", dueDate);
     formData.append("priority", priority);
-    formData.append("progress", String(progress));
+    // formData.append("progress", String(progress));
     formData.append("createdBy", authState.user._id);
     formData.append("department", authState.user.department);
     formData.append("status", "Pending");

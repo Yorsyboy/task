@@ -20,7 +20,7 @@ export type Task = {
   createdBy: {
     _id: number;
     name: string;
-  }
+  };
   department: string;
   createdAt: string;
   approvedBy?: {
@@ -31,8 +31,9 @@ export type Task = {
   priority: "low" | "medium" | "high";
   progress: number;
   assignedTo: {
+    _id?: number;
     name: string;
-  },
+  };
   instruction?: string;
   documents?: { public_id: string; url: string }[];
 };
@@ -82,7 +83,8 @@ const App: React.FC = () => {
       toast.error(`❌ ${authState.message}`);
     }
 
-    if (authState.isSuccess && authState.user) {
+    // Ensure this runs only when the user logs in for the first time
+    if (authState.isSuccess && authState.user && !loggedInUser) {
       setLoggedInUser(authState.user);
       localStorage.setItem("loggedInUser", JSON.stringify(authState.user));
       toast.success("Login successful.");
@@ -92,7 +94,7 @@ const App: React.FC = () => {
 
       dispatch(allTasks());
     }
-  }, [authState, navigate, dispatch]);
+  }, [authState, navigate, dispatch, loggedInUser]); 
 
   useEffect(() => {
     dispatch(allTasks());
@@ -119,7 +121,13 @@ const App: React.FC = () => {
     }
   }, [loggedInUser]);
 
-  const handleAddTask = (title: string, description: string, dueDate: string, priority: "low" | "medium" | "high", progress: number): void => {
+  const handleAddTask = (
+    title: string,
+    description: string,
+    dueDate: string,
+    priority: "low" | "medium" | "high",
+    progress: number
+  ): void => {
     if (description.trim() && loggedInUser) {
       setTasks([
         ...tasks,
@@ -144,7 +152,7 @@ const App: React.FC = () => {
     } else {
       toast.error("Task description cannot be empty.");
     }
-  }
+  };
 
   const handleSendForApproval = (id?: number): void => {
     if (!id) {
@@ -252,6 +260,12 @@ const App: React.FC = () => {
             {loggedInUser.name} | Department: {loggedInUser.department}
           </p>
           <div className="flex space-x-4">
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Dashboard
+            </button>
             <button
               onClick={() => navigate("/add-task")}
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
