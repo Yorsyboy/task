@@ -134,6 +134,20 @@ const AddTask: React.FC<AddTaskProps> = ({}) => {
         </div>
 
         <div>
+          <label htmlFor="progress" className="text-sm hidden">
+            Progress
+          </label>
+          <input
+            type="number"
+            id="progress"
+            className="w-full p-2 border rounded mb-2"
+            value={progress}
+            hidden
+            onChange={(e) => setProgress(Number(e.target.value))}
+          />
+        </div>
+
+        <div>
           <label htmlFor="date" className="text-sm">
             Due Date
           </label>
