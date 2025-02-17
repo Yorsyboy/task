@@ -94,7 +94,7 @@ const App: React.FC = () => {
 
       dispatch(allTasks());
     }
-  }, [authState, navigate, dispatch, loggedInUser]); 
+  }, [authState, navigate, dispatch, loggedInUser]);
 
   useEffect(() => {
     dispatch(allTasks());
@@ -160,7 +160,14 @@ const App: React.FC = () => {
       return;
     }
 
-    if (loggedInUser?.role === "user") {
+    const task = alltasks.find((task: Task) => task._id === id);
+    const assignedTo = task?.assignedTo;
+
+    if (
+      loggedInUser?.role === "user" ||
+      loggedInUser?.role === "supervisor" ||
+      loggedInUser?._id === assignedTo?._id
+    ) {
       const taskData = {
         _id: id,
         status: "Waiting for approval", // ✅ Change to match backend
