@@ -52,12 +52,11 @@ const Dashboard: React.FC<DashboardProps> = ({
                     }`}
                   >
                     <p className="font-medium">
-                      Title:{" "}
-                      <span>{task.title}</span>
+                      Title: <span className="font-light">{task.title}</span>
                     </p>
                     <p className="font-medium">
-                      DEscription:{" "}
-                      <span>{task.description}</span>
+                      Description:{" "}
+                      <span className="font-light">{task.description}</span>
                     </p>
                     <p className="font-medium">
                       Designation:{" "}
@@ -163,13 +162,13 @@ const Dashboard: React.FC<DashboardProps> = ({
                         </button>
                       )}
                     {loggedInUser.role === "supervisor" && (
-                        <button
-                          onClick={() => handleDeleteTask(task._id)}
-                          className="bg-red-500 text-white px-4 py-2 ml-1 rounded hover:bg-red-600"
-                        >
-                          Delete Task
-                        </button>
-                      )}
+                      <button
+                        onClick={() => handleDeleteTask(task._id)}
+                        className="bg-red-500 text-white px-4 py-2 ml-1 rounded hover:bg-red-600"
+                      >
+                        Delete Task
+                      </button>
+                    )}
                   </div>
                 ))}
             </div>
