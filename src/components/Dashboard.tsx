@@ -52,13 +52,15 @@ const Dashboard: React.FC<DashboardProps> = ({
                     }`}
                   >
                     <p className="font-medium">
+                      Title:{" "}
                       <span>{task.title}</span>
                     </p>
                     <p className="font-medium">
+                      DEscription:{" "}
                       <span>{task.description}</span>
                     </p>
                     <p className="font-medium">
-                      Department:{" "}
+                      Designation:{" "}
                       <span className="font-light">{task.department}</span>
                     </p>
                     <p className="font-medium">

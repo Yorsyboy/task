@@ -115,7 +115,7 @@ const App: React.FC = () => {
     if (loggedInUser) {
       const timer = setTimeout(() => {
         handleLogout();
-      }, 5 * 60 * 1000); // 5 minutes
+      }, 10 * 60 * 1000); // 10 minutes
 
       return () => clearTimeout(timer);
     }
