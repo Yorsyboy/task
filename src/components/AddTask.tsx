@@ -92,25 +92,35 @@ const AddTask: React.FC<AddTaskProps> = ({}) => {
     <div>
       <h2 className="text-xl font-bold mb-4">Add New Task</h2>
       <div className="mb-4 flex flex-col space-y-2">
-        <input
-          type="text"
-          placeholder="Title"
-          className="w-full p-2 border rounded mb-2"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+        <div>
+          <label htmlFor="title" className="text-sm">
+            Title <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            placeholder="Title"
+            className="w-full p-2 border rounded mb-2"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
 
-        <input
-          type="text"
-          placeholder="Enter task description"
-          className="w-full p-2 border rounded mb-2"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+        <div>
+          <label htmlFor="description" className="text-sm">
+            Description <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            placeholder="Enter task description"
+            className="w-full p-2 border rounded mb-2"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
 
         <div>
           <label htmlFor="assignedTo" className="text-sm">
-            Assigned To
+            Assigned To <span className="text-red-500">*</span>
           </label>
           {isLoading ? (
             <p>Loading users...</p>
@@ -149,7 +159,7 @@ const AddTask: React.FC<AddTaskProps> = ({}) => {
 
         <div>
           <label htmlFor="date" className="text-sm">
-            Due Date
+            Due Date <span className="text-red-500">*</span>
           </label>
           <input
             type="date"
@@ -162,7 +172,7 @@ const AddTask: React.FC<AddTaskProps> = ({}) => {
 
         <div>
           <label htmlFor="priority" className="text-sm">
-            Priority
+            Priority <span className="text-red-500">*</span>
           </label>
           <select
             className="w-full p-2 border rounded mb-2"
