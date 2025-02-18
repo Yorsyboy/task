@@ -160,8 +160,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                           Approve Task
                         </button>
                       )}
-                    {loggedInUser.role === "supervisor" &&
-                      task.department === loggedInUser.department && (
+                    {loggedInUser.role === "supervisor" && (
                         <button
                           onClick={() => handleDeleteTask(task._id)}
                           className="bg-red-500 text-white px-4 py-2 ml-1 rounded hover:bg-red-600"

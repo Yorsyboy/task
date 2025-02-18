@@ -264,7 +264,7 @@ const App: React.FC = () => {
         <h1 className="text-2xl font-bold mb-4">Task Tracker</h1>
         <div className="flex justify-between mb-4">
           <p className="text-lg font-semibold">
-            {loggedInUser.name} | Department: {loggedInUser.department}
+            {loggedInUser.name} | Designation : {loggedInUser.department}
           </p>
           <div className="flex space-x-4">
             <button
