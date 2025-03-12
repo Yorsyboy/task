@@ -11,7 +11,7 @@ interface DashboardProps {
     name: string;
     role: "user" | "supervisor";
     department: string;
-  };
+  } | null; // Ensure loggedInUser can be null
   handleApproveTask: (id: number) => void;
   handleSendForApproval: (id: number) => void;
   handleDeleteTask: (id: number) => void;
@@ -30,6 +30,21 @@ const Dashboard: React.FC<DashboardProps> = ({
     dispatch(allTasks());
   }, [dispatch]);
 
+  // Prevent rendering if loggedInUser is null
+  if (!loggedInUser) {
+    return (
+      <p className="text-center mt-10 text-gray-600">Loading user data...</p>
+    );
+  }
+
+  // Filter tasks associated with the logged-in user
+  const userTasks = alltasks?.filter(
+    (task) =>
+      task.assignedTo?._id === loggedInUser._id ||
+      task.createdBy?._id === loggedInUser._id ||
+      loggedInUser.role === "supervisor"
+  );
+
   return (
     <div className="min-h-screen bg-gray-100 p-5">
       <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
@@ -38,7 +53,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           <div key={status} className="mb-6">
             <h2 className="text-xl font-semibold mb-4">{status}</h2>
             <div className="space-y-2">
-              {alltasks
+              {userTasks
                 ?.filter((task) => task.status === status)
                 .map((task) => (
                   <div
@@ -86,7 +101,6 @@ const Dashboard: React.FC<DashboardProps> = ({
                         {task.priority}
                       </span>
                     </p>
-                    {/* <p className="font-light">Progress: {task.progress}% </p> */}
                     <p className="font-medium">
                       Created At:{" "}
                       <span className="font-light">
@@ -111,7 +125,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                     )}
                     <p className="font-medium">
                       Created By:{" "}
-                      <span className="font-light">{task.createdBy.name}</span>
+                      <span className="font-light">
+                        {task.createdBy?.name || "Unknown"}
+                      </span>
                     </p>
                     <p className="font-medium">
                       Documents:{" "}
@@ -143,8 +159,8 @@ const Dashboard: React.FC<DashboardProps> = ({
                       </p>
                     )}
                     {status === "Pending" &&
-                      (loggedInUser._id === task.createdBy._id ||
-                        loggedInUser._id === task.assignedTo._id) && (
+                      (loggedInUser._id === task.createdBy?._id ||
+                        loggedInUser._id === task.assignedTo?._id) && (
                         <button
                           onClick={() => handleSendForApproval(task._id)}
                           className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
@@ -161,7 +177,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                           Approve Task
                         </button>
                       )}
-                    {loggedInUser.role === "supervisor" && (
+                    {(loggedInUser.role === "supervisor" ||
+                      loggedInUser._id === task.assignedTo?._id ||
+                      loggedInUser._id === task.createdBy?._id) && (
                       <button
                         onClick={() => handleDeleteTask(task._id)}
                         className="bg-red-500 text-white px-4 py-2 ml-1 rounded hover:bg-red-600"
