@@ -52,13 +52,16 @@ const AddTask: React.FC<AddTaskProps> = ({}) => {
       return;
     }
 
-    const currentDate = new Date();
-    const selectedDueDate = new Date(dueDate);
+ const currentDate = new Date();
+currentDate.setHours(0, 0, 0, 0); // Set to start of the day
+const selectedDueDate = new Date(dueDate);
+selectedDueDate.setHours(0, 0, 0, 0); // Set to start of the day
 
-    if (selectedDueDate < currentDate) {
-      toast.error("Due date cannot be in the past");
-      return;
-    }
+if (selectedDueDate < currentDate) {
+  toast.error("Due date cannot be in the past");
+  return;
+}
+
 
     const formData = new FormData();
     formData.append("title", title);
